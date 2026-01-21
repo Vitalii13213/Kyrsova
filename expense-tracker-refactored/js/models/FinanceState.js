@@ -2,7 +2,6 @@ import { Transaction } from './Transaction.js';
 
 export class FinanceState {
     constructor(transactionsData = [], budgetLimit = 0) {
-        // Перетворюємо сирі дані з Storage у об'єкти класу Transaction
         this.transactions = transactionsData.map(t => new Transaction(t));
         this.budgetLimit = budgetLimit;
     }

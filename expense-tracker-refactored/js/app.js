@@ -8,6 +8,7 @@ import { TableView } from './views/TableView.js';
 import { DashboardView } from './views/DashboardView.js';
 import { ModalView } from './views/ModalView.js';
 import { DateFormatter } from './utils/DateFormatter.js';
+import { SettingsView } from './views/SettingsView.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("[System]: Ініціалізація ректорованої системи...");
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initApp() {
     let transactions = StorageService.load(STORAGE_KEYS.TRANSACTIONS);
+
 
     if (!transactions) {
         transactions = INITIAL_TRANSACTIONS;
@@ -28,6 +30,10 @@ function initApp() {
         dateInput.value = DateFormatter.getCurrentISODate();
     }
 
+    const settings = StorageService.load(STORAGE_KEYS.SETTINGS) || INITIAL_SETTINGS;
+    SettingsView.applyTheme(settings.theme);
+    SettingsView.updateCurrencySymbols(settings.currency);
+    
     refreshUI(transactions);
 }
 
@@ -45,7 +51,7 @@ function refreshUI(transactions) {
 
 function setupEventListeners() {
     document.getElementById('btnOpenModal').addEventListener('click', () => {
-        ModalView.setEditMode(false); // Скидаємо режим редагування перед відкриттям
+        ModalView.setEditMode(false);
         ModalView.clearForm();
         ModalView.show('addTransactionModal');
     });
@@ -73,26 +79,27 @@ function setupEventListeners() {
     });
 
     const filters = ['globalSearch', 'categoryFilter', 'typeFilter', 'dateFilter'];
-    filters.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('change', () => {
-                const currentFilters = {
-                    search: document.getElementById('globalSearch').value,
-                    category: document.getElementById('categoryFilter').value,
-                    type: document.getElementById('typeFilter').value
-                };
-                TransactionController.handleFilterChange(currentFilters);
-            });
-        }
-    });
+filters.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('change', () => {
+            const currentFilters = {
+                search: document.getElementById('globalSearch').value,
+                category: document.getElementById('categoryFilter').value,
+                type: document.getElementById('typeFilter').value,
+                dateRange: document.getElementById('dateFilter').value
+            };
+            TransactionController.handleFilterChange(currentFilters);
+        });
+    }
+});
 
     const headers = document.querySelectorAll('#transactions-table thead th');
     const columnMapping = ['date', 'name', 'category', 'amount'];
 
     headers.forEach((header, index) => {
         if (index < columnMapping.length) {
-            header.style.cursor = 'pointer'; // Візуальна підказка
+            header.style.cursor = 'pointer';
             header.title = 'Натисніть для сортування';
             header.addEventListener('click', () => {
                 TransactionController.handleSort(columnMapping[index]);

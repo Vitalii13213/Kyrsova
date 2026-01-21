@@ -3,7 +3,7 @@ export class Transaction {
         this.id = id || Date.now() + Math.random();
         this.name = name;
         this.amount = parseFloat(amount);
-        this.type = type; // 'income' або 'expense'
+        this.type = type;
         this.category = category;
         this.date = date;
         this.comment = comment;

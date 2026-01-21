@@ -6,7 +6,7 @@ export const ExportService = {
 
         const headers = ['ID', 'Назва', 'Сума', 'Тип', 'Категорія', 'Дата', 'Коментар'];
         const csvContent = [
-            '\uFEFF' + headers.join(','), // Додаємо BOM для коректного відображення кирилиці в Excel
+            '\uFEFF' + headers.join(','),
             ...transactions.map(t => [
                 t.id,
                 `"${t.name}"`,

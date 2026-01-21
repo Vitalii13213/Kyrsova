@@ -101,7 +101,23 @@ export function handleFilterChange(filters) {
         const searchMatch = t.name.toLowerCase().includes(filters.search.toLowerCase());
         const catMatch = filters.category === 'all' || t.category === filters.category;
         const typeMatch = filters.type === 'all' || t.type === filters.type;
-        return searchMatch && catMatch && typeMatch;
+
+        let dateMatch = true;
+        if (filters.dateRange && filters.dateRange !== 'all') {
+            const tDate = new Date(t.date);
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+
+            if (filters.dateRange === 'today') {
+                dateMatch = t.date === todayStr;
+            } else if (filters.dateRange === 'month') {
+                dateMatch = (tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear());
+            } else if (filters.dateRange === 'year') {
+                dateMatch = (tDate.getFullYear() === now.getFullYear());
+            }
+        }
+
+        return searchMatch && catMatch && typeMatch && dateMatch;
     });
 
     const sorted = sortTransactions(filtered);
