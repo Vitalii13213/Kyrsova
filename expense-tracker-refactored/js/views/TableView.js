@@ -1,5 +1,6 @@
 import { DateFormatter } from '../utils/DateFormatter.js';
 import { Helpers } from '../utils/Helpers.js';
+import * as TransactionController from '../controllers/TransactionController.js';
 
 export const TableView = {
     render(transactions, onDeleteCallback) {
@@ -22,12 +23,15 @@ export const TableView = {
                 <td style="color: ${isIncome ? 'green' : 'red'}; font-weight: bold">
                     ${isIncome ? '+' : '-'}${Helpers.formatCurrency(t.amount)}
                 </td>
-                <td>
+                <td class="actions-cell">
+                    <button class="btn-edit" data-id="${t.id}">Редагувати</button>
                     <button class="btn-delete" data-id="${t.id}">Видалити</button>
                 </td>
             `;
 
+            row.querySelector('.btn-edit').onclick = () => TransactionController.handlePrepareEdit(t.id);
             row.querySelector('.btn-delete').onclick = () => onDeleteCallback(t.id);
+
             container.appendChild(row);
         });
     }

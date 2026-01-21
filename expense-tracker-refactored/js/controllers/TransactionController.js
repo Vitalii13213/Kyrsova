@@ -4,6 +4,8 @@ import { AnalyticsService } from '../services/AnalyticsService.js';
 import { TableView } from '../views/TableView.js';
 import { DashboardView } from '../views/DashboardView.js';
 import { NotificationView } from '../views/NotificationView.js';
+import { ModalView } from '../views/ModalView.js';
+import { Validators } from '../utils/Validator.js';
 
 let currentSort = { column: 'date', asc: false };
 
@@ -15,12 +17,28 @@ export function handlePrepareEdit(id) {
         ModalView.fillForm(transaction);
         ModalView.setEditMode(true, id);
         ModalView.show('addTransactionModal');
-    } else {
-        NotificationView.show('Помилка: Транзакцію не знайдено!', 'error');
     }
 }
 
+function validateData(formData) {
+    if (Validators.isEmpty(formData.name)) {
+        NotificationView.show('Назва не може бути порожньою!', 'error');
+        return false;
+    }
+    if (!Validators.isPositiveNumber(formData.amount)) {
+        NotificationView.show('Введіть коректну суму!', 'error');
+        return false;
+    }
+    if (!Validators.hasNoHtml(formData.name) || !Validators.hasNoHtml(formData.comment)) {
+        NotificationView.show('Використання HTML-тегів заборонено!', 'error');
+        return false;
+    }
+    return true;
+}
+
 export function handleEditTransaction(id, formData) {
+    if (!validateData(formData)) return;
+
     const transactions = StorageService.load(STORAGE_KEYS.TRANSACTIONS) || [];
     const index = transactions.findIndex(t => t.id === id);
 
@@ -30,21 +48,16 @@ export function handleEditTransaction(id, formData) {
             ...formData,
             amount: parseFloat(formData.amount)
         };
-
         StorageService.save(STORAGE_KEYS.TRANSACTIONS, transactions);
-
         updateAllViews(transactions);
-        ModalView.setEditMode(false);
         ModalView.hide('addTransactionModal');
-        ModalView.clearForm();
-
         NotificationView.show('Запис оновлено успішно!', 'success');
-    } else {
-        NotificationView.show('Помилка оновлення!', 'error');
     }
 }
 
 export function handleAddTransaction(formData) {
+    if (!validateData(formData)) return;
+
     const newTransaction = {
         id: Date.now(),
         ...formData,
@@ -53,9 +66,7 @@ export function handleAddTransaction(formData) {
 
     const transactions = StorageService.load(STORAGE_KEYS.TRANSACTIONS) || [];
     transactions.push(newTransaction);
-
     StorageService.save(STORAGE_KEYS.TRANSACTIONS, transactions);
-
     updateAllViews(transactions);
     NotificationView.show('Транзакцію додано!', 'success');
 }

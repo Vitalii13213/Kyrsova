@@ -58,17 +58,14 @@
                         <input type="text" id="globalSearch" placeholder="Пошук транзакцій...">
                     </div>
                     <div class="header-actions">
-                        <button class="btn btn-primary" id="btnOpenModal">
-                            + Додати транзакцію
-                        </button>
-                        <button class="btn btn-secondary" id="btnExport">
-                            Експорт CSV
-                        </button>
+                        <button class="btn btn-primary" id="btnOpenModal">+ Додати транзакцію</button>
+                        <button class="btn btn-secondary" id="btnExport">Експорт CSV</button>
+                        <button class="btn btn-info" id="btnBackupJSON">Backup JSON</button>
+                        <button class="btn btn-info" id="btnImportJSON">Import JSON</button>
                     </div>
                 </header>
 
                 <div id="view-container">
-
                     <section class="stats-grid">
                         <div class="stat-card" id="card-balance">
                             <h3>Поточний баланс</h3>
@@ -112,7 +109,61 @@
         </div>
     </div>
 
-    <div id="modal-container"></div>
+    <div id="modal-container">
+        <div id="addTransactionModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Транзакція</h2>
+                    <span class="close" onclick="document.getElementById('addTransactionModal').style.display='none'">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Назва операції*</label>
+                        <input type="text" id="inpName">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Сума*</label>
+                            <input type="number" id="inpAmount" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Тип*</label>
+                            <select id="inpType">
+                                <option value="expense">Витрата</option>
+                                <option value="income">Дохід</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Категорія</label>
+                            <select id="inpCategory">
+                                <option value="Їжа">Їжа</option>
+                                <option value="Транспорт">Транспорт</option>
+                                <option value="Розваги">Розваги</option>
+                                <option value="Комунальні">Комунальні</option>
+                                <option value="Зарплата">Зарплата</option>
+                                <option value="Здоров'я">Здоров'я</option>
+                                <option value="Інше">Інше</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата*</label>
+                            <input type="date" id="inpDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Коментар</label>
+                        <textarea id="inpComment" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="document.getElementById('addTransactionModal').style.display='none'">Скасувати</button>
+                    <button class="btn btn-primary btn-save">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="js/app.js"></script>
 </body>
